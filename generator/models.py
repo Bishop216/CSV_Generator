@@ -13,7 +13,7 @@ class DataSchema(models.Model):
 class Column(models.Model):
     name = models.CharField(max_length=100, null=False)
     order = models.IntegerField()
-    schema = models.ForeignKey(DataSchema, on_delete=models.CASCADE())
+    schema = models.ForeignKey(DataSchema, on_delete=models.CASCADE)
 
 
 # Data types.
