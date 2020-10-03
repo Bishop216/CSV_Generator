@@ -23,9 +23,9 @@ class Column(models.Model):
     name = models.CharField(max_length=100, null=False)
     order = models.IntegerField()
     schema = models.ForeignKey(DataSchema, on_delete=models.CASCADE)
-    data_type = models.IntegerField(choices=DATA_TYPES)
-    value_range_from = models.IntegerField()
-    value_range_to = models.IntegerField()
+    data_type = models.IntegerField(choices=DATA_TYPES, null=True)
+    value_range_from = models.IntegerField(null=True)
+    value_range_to = models.IntegerField(null=True)
 
     def generate_fake_value(self):
         # Integer.
