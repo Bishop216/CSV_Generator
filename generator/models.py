@@ -8,6 +8,8 @@ from django.contrib.auth.models import User
 class DataSchema(models.Model):
     name = models.CharField(max_length=100, null=False)
     user = models.ForeignKey(User, on_delete=models.CASCADE)
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
 
 
 DATA_TYPES = (
@@ -67,3 +69,11 @@ class Column(models.Model):
                 'Something Company',
                 'Not A Company',
             ])
+
+
+class DataSet(models.Model):
+    schema = models.ForeignKey(DataSchema, on_delete=models.CASCADE)
+    rows = models.IntegerField(null=False, default=10)
+    status = models.BooleanField(default=False)
+    file_name = models.CharField(max_length=255, null=True)
+    created_at = models.DateTimeField(auto_now_add=True)
