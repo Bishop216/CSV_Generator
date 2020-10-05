@@ -1,0 +1,50 @@
+{% extends 'base.html' %}
+
+<head>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css"
+          integrity="sha384-JcKb8q3iqJ61gNV9KGb8thSsNjpSL0n8PARn9HuZOnIxN0hoP+VmmDGMN5t9UJ0Z" crossorigin="anonymous">
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"
+            integrity="sha384-B4gt1jrGC7Jh4AgTPSdUtOBvfO8shuf57BaghqFfPlYxofvL8/KUEfYiJOMMV+rV"
+            crossorigin="anonymous"></script>
+</head>
+
+{% block content %}
+<h1>Data Sets</h1>
+<div class="row">
+    <form method="post" class="ml-auto">
+        {% csrf_token %}
+        {{ form }}
+        <button type="submit">Generate data</button>
+    </form>
+    <table class="table" id="table1">
+        <tr>
+            <td>#</td>
+            <td>Created</td>
+            <td>Status</td>
+            <td>Actions</td>
+        </tr>
+        {% for object in object_list %}
+            <tr>
+                <td>
+                    {{ object.id }}
+                </td>
+                <td>
+                    {{ object.created_at }}
+                </td>
+                <td>
+                    {% if object.status == True %}
+                        <span class="badge badge-success">Ready</span>
+                    {% else %}
+                        <span class="badge badge-light">Processing</span>
+                    {% endif %}
+                </td>
+                <td>
+                    {% if object.status == True %}
+                        <a href="{% url "download" object.id %}" class="btn-link">Download</a>
+                    {% endif %}
+                </td>
+            </tr>
+        {% endfor %}
+    </table>
+</div>
+{% endblock %}

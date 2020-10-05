@@ -5,7 +5,7 @@ from generator.models import DataSet
 from CSV_generator.celery import app
 
 
-@app.task()
+@app.task
 def generate_csv(set_id):
     """
     Celery task to generate a csv file containing fake data.
