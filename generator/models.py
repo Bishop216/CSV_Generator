@@ -11,19 +11,19 @@ class DataSchema(models.Model):
 
 
 DATA_TYPES = (
-    (0, 'Integer'),
     (1, 'Job'),
     (2, 'Email'),
     (3, 'Domain'),
-    (4, 'Company')
+    (4, 'Company'),
+    (0, 'Integer'),
 )
 
 
 class Column(models.Model):
     name = models.CharField(max_length=100, null=False)
-    order = models.IntegerField()
+    order = models.IntegerField(default=0)
     schema = models.ForeignKey(DataSchema, on_delete=models.CASCADE)
-    data_type = models.IntegerField(choices=DATA_TYPES, null=True)
+    data_type = models.IntegerField(choices=DATA_TYPES, null=True, default=3)
     value_range_from = models.IntegerField(null=True)
     value_range_to = models.IntegerField(null=True)
 

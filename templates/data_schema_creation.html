@@ -1,0 +1,68 @@
+{% extends 'base.html' %}
+
+{% block content %}
+    <h1>New schema</h1>
+    <form id="form-container" method="POST">
+        {% csrf_token %}
+        {{ schema_form.name.label }}
+        {{ schema_form.name }}
+        <h1>Schema columns</h1>
+        {{ formset.management_form }}
+        {% for form in formset %}
+            <div class="column-form">
+                {{ form.name.label }}
+                {{ form.name }}
+                {{ form.data_type.label }}
+                {{ form.data_type }}
+                {{ form.order.label }}
+                {{ form.order }}
+                <ul>
+                    Integer type:
+                    <div>
+
+                        {{ form.value_range_from.label }}
+                        {{ form.value_range_from }}
+                        {{ form.value_range_to.label }}
+                        {{ form.value_range_to }}
+                    </div>
+                </ul>
+            </div>
+        {% endfor %}
+        <button id="add-form" type="button">Add column</button>
+        <button id="delete-form" class="btn-danger" type="button">Delete column</button>
+        <button type="submit" class="btn-success">Submit</button>
+    </form>
+
+    <script>
+    let columnForm = document.querySelectorAll(".column-form")
+    let container = document.querySelector("#form-container")
+    let addButton = document.querySelector("#add-form")
+    let deleteButton = document.querySelector("#delete-form")
+    let totalForms = document.querySelector("#id_form-TOTAL_FORMS")
+
+    let formNum = columnForm.length-1
+    addButton.addEventListener('click', addForm)
+    deleteButton.addEventListener('click', deleteForm)
+
+    function addForm(e){
+        e.preventDefault()
+
+        let newForm = columnForm[0].cloneNode(true)
+        let formRegex = RegExp(`form-(\\d){1}-`,'g')
+
+        formNum++
+        newForm.innerHTML = newForm.innerHTML.replace(formRegex, `form-${formNum}-`)
+        container.insertBefore(newForm, addButton)
+
+        totalForms.setAttribute('value', `${formNum+1}`)
+    }
+
+    function deleteForm() {
+        if (totalForms.value > 1) {
+            let allForms = document.getElementsByClassName('column-form')
+            allForms[allForms.length-1].remove()
+            totalForms.setAttribute('value', `${formNum--}`)
+        }
+    }
+    </script>
+{% endblock %}

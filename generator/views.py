@@ -1,14 +1,60 @@
 import os
 from django.http import FileResponse, HttpResponse, HttpResponseRedirect
 from django.conf import settings
+from django.shortcuts import redirect, render
 from django.views.generic import ListView
 from django.contrib.auth.mixins import LoginRequiredMixin
-from .models import DataSet, DataSchema
-from .forms import DataSetForm
+from .models import DataSet, DataSchema, Column
+from .forms import DataSetForm, DataSchemaForm, ColumnFormSet
 from .tasks import generate_csv
 
 
+def create_data_schema(request):
+    """
+    View responsible for data schemas creation.
+    :param request:
+    :return:
+    """
+    template_name = 'data_schema_creation.html'
+
+    if request.method == 'GET':
+        schema_form = DataSchemaForm(request.GET or None)
+        formset = ColumnFormSet()
+
+    elif request.method == 'POST':
+        schema_form = DataSchemaForm(request.POST)
+        formset = ColumnFormSet(request.POST)
+
+        if schema_form.is_valid() and formset.is_valid():
+            schema_data = schema_form.cleaned_data
+            columns_data = formset.cleaned_data
+
+            new_schema = DataSchema(name=schema_data['name'],
+                                    user=request.user)
+            new_schema.save()
+
+            for column in columns_data:
+                new_column = Column(schema=new_schema,
+                                    name=column['name'],
+                                    data_type=column['data_type'],
+                                    order=column['order'],
+                                    value_range_from=column.get('value_range_from'),
+                                    value_range_to=column.get('value_range_to'))
+
+                new_column.save()
+
+            return redirect('schema-list')
+
+    return render(request, template_name, {
+        'schema_form': schema_form,
+        'formset': formset
+    })
+
+
 class DataSchemaList(LoginRequiredMixin, ListView):
+    """
+    View that lists user data schemas.
+    """
     model = DataSchema
     template_name = 'data_schema_list.html'
 
@@ -18,6 +64,9 @@ class DataSchemaList(LoginRequiredMixin, ListView):
 
 
 class DataSetList(LoginRequiredMixin, ListView):
+    """
+    View that lists created data sets related to specific data schema.
+    """
     model = DataSet
     template_name = 'data_set_list.html'
     form_class = DataSetForm
