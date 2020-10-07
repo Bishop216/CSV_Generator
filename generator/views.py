@@ -65,7 +65,7 @@ class DataSchemaList(LoginRequiredMixin, ListView):
 
 class DataSetList(LoginRequiredMixin, ListView):
     """
-    View that lists created data sets related to specific data schema.
+    View responsible for listing and creating data sets related to specific data schema.
     """
     model = DataSet
     template_name = 'data_set_list.html'
@@ -98,6 +98,24 @@ class DataSetList(LoginRequiredMixin, ListView):
             return HttpResponseRedirect(self.request.path_info)
         else:
             return self.get(request)
+
+
+def delete_schema(request, schema_id):
+    """
+    View to delete data schema.
+    :param request:
+    :param schema_id:
+    :return:
+    """
+    schema = DataSchema.objects.get(pk=schema_id)
+
+    if schema.user == request.user:
+
+        schema.delete()
+
+        return redirect('schema-list')
+    else:
+        return HttpResponse(status=403)
 
 
 def download(request, set_id):

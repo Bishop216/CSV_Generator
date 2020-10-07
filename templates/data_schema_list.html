@@ -23,7 +23,7 @@
                         {{ object.updated_at }}
                     </td>
                     <td>
-                        <button class="btn-danger">delete</button>
+                        <a href="{% url "schema-delete" object.id %}" style="color: #dc143c">delete</a>
                     </td>
                 </tr>
             {% endfor %}
